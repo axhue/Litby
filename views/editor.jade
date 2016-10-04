@@ -1,0 +1,50 @@
+script(type='text/javascript' src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js")
+doctype html
+html
+  head
+    meta(charset='UTF-8')
+    title Litby
+    link(rel='stylesheet', href='css/demo.css')
+    link(rel='stylesheet', href='http://netdna.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.css')
+    link(rel='stylesheet', href='../dist/css/medium-editor.css')
+    link(href="https://fonts.googleapis.com/css?family=Lato|Raleway" rel="stylesheet")
+    link#medium-editor-theme(rel='stylesheet', href='../dist/css/themes/beagle.css')
+  body
+    #container
+      h1
+        | Litby Editor
+        sup BETA
+      if docs
+        for doc in docs
+          .editable(id=doc._id)
+            for txt in doc.msg
+              !{txt}
+              br
+    script(src='../dist/js/medium-editor.js')
+    script.
+      var editor = new MediumEditor('.editable', {
+      toolbar: {
+      static: true,
+      sticky: true
+      }
+      });
+      var triggerAutoSave = function (event, editable) {
+        /*
+        for (var name in editable) {
+            console.log(name)
+        }*/
+            $.ajax({
+            url: "litby/savedb",
+            type: "POST",
+            //somehow get forms
+            data: {data:editable.innerHTML,
+                    id:editable.id}
+        });
+      };
+
+      var throttledAutoSave = MediumEditor.util.throttle(triggerAutoSave, 3000); // 1 second
+
+            // Listening to editable events starts here
+      editor.subscribe('editableInput', throttledAutoSave);
+      cssLink = document.getElementById('medium-editor-theme');
+    script(src='../js/test.js')
