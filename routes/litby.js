@@ -88,7 +88,7 @@ router.get('/webhook', function(req, res, next) {
         "buttons": [
           {
             "type": "web_url",
-            "url": 'https://stansonweb.herokuapp.com/geteditor?fbid='+req.query.fbid,
+            "url": 'https://stansonweb.herokuapp.com/litby/geteditor?fbid='+req.query.fbid,
             "title": "View in editor"
           }
         ]
