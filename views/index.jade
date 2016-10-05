@@ -1,5 +1,11 @@
-extends layout
-
-block content
-  h1= title
-  p Welcome to #{title}
+html
+    link(rel='stylesheet', href='../css/index.css')
+    script(src='../js/client_index.js')
+    svg(xmlns='http://www.w3.org/2000/svg', viewbox='-1500 -1500 3000 3000', preserveaspectratio='xMidYMid slice')
+      defs
+        pattern#grid1(width='100', height='173.2', patternunits='userSpaceOnUse')
+          path(fill-rule='evenodd', d=' M0,0 H100 V173.2 H0 M25,129.9 m20,0 a20,20 0 1,0  0,0.1 M125,129.9 m20,0 a20,20 0 1,0  0,0.1 M75,43.3 m20,0 a20,20 0 1,0  0,0.1     M-25,43.3 m20,0 a20,20 0 1,0  0,0.1')
+        pattern#grid2(width='100', height='173.2', patternunits='userSpaceOnUse')
+          path(fill-rule='evenodd', d=' M0,0 H100 V173.2 H0 M25,129.9 m20,0 a20,20 0 1,0  0,0.1 M125,129.9 m20,0 a20,20 0 1,0  0,0.1 M75,43.3 m20,0 a20,20 0 1,0  0,0.1     M-25,43.3 m20,0 a20,20 0 1,0  0,0.1')
+      rect(fill='url(#grid1)', x='-3000', y='-3000', width='6000', height='6000', transform='scale(0.9,0.9) translate(0,0) rotate(0)')
+      rect(fill='url(#grid2)', x='-3000', y='-3000', width='6000', height='6000', transform='scale(0.9,0.9) translate(0,0) rotate(0)')
