@@ -30,7 +30,8 @@ function assemble_data(user_id,res){
                 function sortFactory(prop) {
                   return function(a,b){ return b[prop].localeCompare(a[prop]); };
                 }
-                res.render('editor', {docs:docs.sort(sortFactory('time'))});
+                res.render('editor', {docs:docs.sort(sortFactory('time')),
+                                      fbid:user_id});
             }
         });
 
@@ -44,13 +45,38 @@ router.get('/geteditor', function(req, res, next) {
   assemble_data(req.query.fbid,res)
 });
 router.post('/savedb', function(req, res, next) {
-    novel.findById(req.body.id,function(err,res){
-        res.msg = req.body.data;
-        res.save();
-    })
-    res.status(200)
-    res.send()
+  console.log(req.body.id)
+
+  if (req.body.id === 'new_entry'){
+    var now = new Date();
+        db_entry = new novel({
+        fbid:req.body.fbid,
+        time:now.toISOString(),
+        msg:req.body.msg
+        })
+        db_entry.save();
+        res.status(200)
+        res.send()
+  }
+  else{
+      console.log(req.body.msg)
+        if (!req.body.msg){
+          console.log('deletin')
+          novel.findById(req.body.id).remove(function(err,res){if(err){console.log(err)}})
+        }
+        else{
+          novel.findById(req.body.id,function(err,res){
+            res.msg = req.body.data;
+            res.save();
+          });
+      }
+    
+  }
+  res.status(200)
+  res.send()
+
 });
+
 
 router.get('/jsoneditor', function(req, res, next) {
 

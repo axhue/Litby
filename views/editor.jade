@@ -14,6 +14,9 @@ html
       h1
         | Litby Editor
         sup BETA
+      .editable(id="new_entry")
+        p new entry
+      
       if docs
         for doc in docs
           .editable(id=doc._id)
@@ -29,20 +32,20 @@ html
       }
       });
       var triggerAutoSave = function (event, editable) {
-        /*
-        for (var name in editable) {
-            console.log(name)
-        }*/
             $.ajax({
             url: "/litby/savedb",
             type: "POST",
             //somehow get forms
             data: {data:editable.innerHTML,
-                    id:editable.id}
+                    id:editable.id,
+                    fbid:'!{fbid}'},
+            error: function(xhr, status, error) {
+              alert(xhr.responseText);
+            }
         });
       };
 
-      var throttledAutoSave = MediumEditor.util.throttle(triggerAutoSave, 3000); // 1 second
+      var throttledAutoSave = MediumEditor.util.throttle(triggerAutoSave, 3000);
 
             // Listening to editable events starts here
       editor.subscribe('editableInput', throttledAutoSave);
