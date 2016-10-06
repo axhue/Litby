@@ -52,7 +52,31 @@ router.post('/savedb', function(req, res, next) {
     res.send()
 });
 
+router.get('/jsoneditor', function(req, res, next) {
 
+  var sendback = {
+    "attachment": {
+      "type": "template",
+      "payload": {
+        "template_type": "button",
+        "text": "Editor loaded 👍",
+        "buttons": [
+          {
+            "type": "web_url",
+            "url": 'https://stansonweb.herokuapp.com/litby/geteditor?fbid='+req.query.fbid,
+            "title": "View editor"
+          }
+        ]
+      }
+    }
+  };
+  res.json(sendback)
+  res.status(200);
+  res.send();
+  
+
+
+});
 router.get('/webhook', function(req, res, next) {
   var now = new Date();
   texts = req.query.msg.split('|')
