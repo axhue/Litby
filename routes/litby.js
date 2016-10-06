@@ -45,8 +45,6 @@ router.get('/geteditor', function(req, res, next) {
   assemble_data(req.query.fbid,res)
 });
 router.post('/savedb', function(req, res, next) {
-  console.log(req.body.id)
-
   if (req.body.id === 'new_entry'){
     var now = new Date();
         db_entry = new novel({
@@ -59,9 +57,7 @@ router.post('/savedb', function(req, res, next) {
         res.send()
   }
   else{
-      console.log(req.body.msg)
         if (!req.body.msg){
-          console.log('deletin')
           novel.findById(req.body.id).remove(function(err,res){if(err){console.log(err)}})
         }
         else{
@@ -69,7 +65,7 @@ router.post('/savedb', function(req, res, next) {
             res.msg = req.body.data;
             res.save();
           });
-      }
+        }
     
   }
   res.status(200)
@@ -97,6 +93,38 @@ router.get('/jsoneditor', function(req, res, next) {
     }
   };
   res.json(sendback)
+  res.status(200);
+  res.send();
+  
+
+
+});
+router.get('/silenthook', function(req, res, next) {
+  var now = new Date();
+  texts = req.query.msg.split('|')
+  if(req.query.head){head=req.query.head;}
+  else{head='Untitled';}
+  var header = '<h2>'.concat(head,'</h2>')
+  texts[0] = header.concat(texts[0])
+  if (req.query.category === 'novel'){
+    db_entry = new novel({
+        fbid:req.query.fbid,
+        time:now.toISOString(),
+        msg:texts
+
+    })
+  }
+  if (req.query.category === 'short_story'){
+    db_entry = new novel({
+        fbid:req.query.fbid,
+        time:now.toISOString(),
+        msg:texts
+    })
+  }
+  db_entry.save(function(err,success) {
+    if(err) {console.log('err')}
+    console.log(success)
+  })
   res.status(200);
   res.send();
   
