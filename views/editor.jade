@@ -14,9 +14,6 @@ html
       h1
         | Litby Editor
         sup BETA
-      .editable(id="new_entry")
-        p new entry
-      
       if docs
         for doc in docs
           .editable(id=doc._id)
