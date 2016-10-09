@@ -185,7 +185,7 @@ router.get('/webhook', function(req, res, next) {
       }
     }
   };
-  short_story.findOne({num:{"$lte":20,"$gte":0}},function(err,doc) {
+  short_story.findOne({fbid:req.query.fbid,num:{"$lte":20,"$gte":0}},function(err,doc) {
     if(err){console.log(err)}
     else{
       console.log(doc)
