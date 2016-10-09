@@ -105,28 +105,28 @@ router.get('/jsoneditor', function(req, res, next) {
 
 });
 router.get('/silenthook', function(req, res, next) {
-  texts = req.query.msg.split('|')
+  var texts = req.query.msg.split('|')
   for (var i = 0, len = texts.length; i < len; i++) {
         texts[i] = '<p>'.concat(texts[i],'</p>')
   }
-
-  if(req.query.head){
-    head=req.query.head;
+  if(req.query.header){
+    head=req.query.header;
     var headerhtml = '<h2>'.concat(head,'</h2>')
     texts[0] = headerhtml.concat(texts[0])
-
   }
-  
-  short_story.findOne({num:{"$lte":20,"$gte":0}},function(err,doc) {
+  entry = texts.join('')
+  short_story.findOne({fbid:req.query.fbid,num:{"$lte":20,"$gte":0}},function(err,doc) {
     if(err){console.log(err)}
     else{
       console.log(doc)
       if(doc){
         console.log('updating')
-        doc.msgs.push(texts)
+        doc.msgs = doc.msgs.concat(entry)
         doc.num+=1
         doc.save(function(err,success){
           if(err){console.log(err)}
+              res.json(sendback)
+              res.status(200);
         })
       }
       else{
@@ -137,13 +137,14 @@ router.get('/silenthook', function(req, res, next) {
           db_entry = new short_story({
           fbid:req.query.fbid,
           time:now.toISOString(),
-          msgs:texts,
+          msgs:entry,
           num:0,
           doc_index:count
           })
         db_entry.save(function(err,success) {
           if(err) {console.log('err')}
-          console.log(success)
+              res.json(sendback)
+              res.status(200);
         });          
         })
 
@@ -176,12 +177,17 @@ router.get('/webhook', function(req, res, next) {
       "type": "template",
       "payload": {
         "template_type": "button",
-        "text": "saved!",
+        "text": "Saved!",
         "buttons": [
           {
             "type": "web_url",
             "url": 'https://stansonweb.herokuapp.com/litby/geteditor?index=0&fbid='+req.query.fbid,
-            "title": "View in editor"
+            "title": "View editor"
+          },
+          {
+            "type": "show_block",
+            "block_name": "Freewriting",
+            "title": "Keep going"
           }
         ]
       }

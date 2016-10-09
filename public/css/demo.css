@@ -6,6 +6,8 @@
 body {
     font-family: 'Raleway', sans-serif;
     font-size: 16px;
+    background-image: url('../img/paper.png');
+    background-repeat: repeat;
 }
 sup {
     font-size: 20px;
@@ -35,7 +37,7 @@ h1 {
     margin-bottom: 40px;
     padding-bottom: 40px;
     letter-spacing: -2px;
-    color:#5DCCFC;;
+    color:#5DCCFC;
     border-bottom: 1px solid #dbdbdb;
     font-family: 'Lato', sans-serif;
 }
