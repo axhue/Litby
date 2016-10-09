@@ -14,12 +14,11 @@ html
       h1
         | Litby Editor
         sup BETA
-      if docs
-        for doc in docs
-          .editable(id=doc._id)
-            for txt in doc.msg
+      if doc
+        .editable(id=doc._id)
+          for entry in doc.msgs
+            for txt in entry
               !{txt}
-              br
     script(src='../dist/js/medium-editor.js')
     script.
       var editor = new MediumEditor('.editable', {
