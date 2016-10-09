@@ -8,7 +8,7 @@ db.on('error', console.error.bind(console, 'connection error:'));
 var entry = mongoose.Schema({
     fbid: String,
     time: String,
-    msgs:Array,
+    msgs:String,
     category:String,
     num: Number,
     doc_index:Number
@@ -33,6 +33,7 @@ function assemble_data(user_id,index,res){
                   return function(a,b){ return b[prop].localeCompare(a[prop]); };
                 }*/
                 res.render('editor', {doc:doc,
+                                      entries:doc.msgs,
                                       fbid:user_id});
             }
         });
@@ -59,15 +60,16 @@ router.post('/savedb', function(req, res, next) {
         res.send()
   }
   else{
-    /*
+    
         if (!req.body.msg){
           novel.findById(req.body.id).remove(function(err,res){if(err){console.log(err)}})
-        }*/
-      
-          novel.findById(req.body.id,function(err,res){
-            res.msg = req.body.data;
+        }
+        
+        short_story.findById(req.body.id,function(err,res){
+            res.msgs = req.body.data;
             res.save();
           });
+        
 
     
   }
@@ -104,16 +106,17 @@ router.get('/jsoneditor', function(req, res, next) {
 });
 router.get('/silenthook', function(req, res, next) {
   texts = req.query.msg.split('|')
-
-  if(req.query.head){head=req.query.head;}
-  else{head='';}
-  
-  var headerhtml = '<h2>'.concat(head,'</h2>')
-
   for (var i = 0, len = texts.length; i < len; i++) {
         texts[i] = '<p>'.concat(texts[i],'</p>')
   }
-  texts[0] = headerhtml.concat(texts[0])
+
+  if(req.query.head){
+    head=req.query.head;
+    var headerhtml = '<h2>'.concat(head,'</h2>')
+    texts[0] = headerhtml.concat(texts[0])
+
+  }
+  
   short_story.findOne({num:{"$lte":20,"$gte":0}},function(err,doc) {
     if(err){console.log(err)}
     else{
@@ -157,18 +160,17 @@ router.get('/silenthook', function(req, res, next) {
 });
 router.get('/webhook', function(req, res, next) {
   
-  texts = req.query.msg.split('|')
-
-  if(req.query.head){head=req.query.head;}
-  else{head='';}
-  
-  var headerhtml = '<h2>'.concat(head,'</h2>')
-
+  var texts = req.query.msg.split('|')
   for (var i = 0, len = texts.length; i < len; i++) {
         texts[i] = '<p>'.concat(texts[i],'</p>')
   }
-  texts[0] = headerhtml.concat(texts[0])
-  console.log(texts)
+  if(req.query.header){
+    head=req.query.header;
+    var headerhtml = '<h2>'.concat(head,'</h2>')
+    texts[0] = headerhtml.concat(texts[0])
+  }
+  
+  entry = texts.join('')
   var sendback = {
     "attachment": {
       "type": "template",
@@ -191,7 +193,7 @@ router.get('/webhook', function(req, res, next) {
       console.log(doc)
       if(doc){
         console.log('updating')
-        doc.msgs.push(texts)
+        doc.msgs = doc.msgs.concat(entry)
         doc.num+=1
         doc.save(function(err,success){
           if(err){console.log(err)}
@@ -207,7 +209,7 @@ router.get('/webhook', function(req, res, next) {
           db_entry = new short_story({
           fbid:req.query.fbid,
           time:now.toISOString(),
-          msgs:texts,
+          msgs:entry,
           num:0,
           doc_index:count
           })

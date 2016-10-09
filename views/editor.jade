@@ -16,9 +16,7 @@ html
         sup BETA
       if doc
         .editable(id=doc._id)
-          for entry in doc.msgs
-            for txt in entry
-              !{txt}
+          !{entries}
     script(src='../dist/js/medium-editor.js')
     script.
       var editor = new MediumEditor('.editable', {
@@ -28,6 +26,12 @@ html
       }
       });
       var triggerAutoSave = function (event, editable) {
+            for (var prop in editable) {
+              console.log('obj.' + prop + ' = ' + editable[prop]);
+            }
+            for (var prop in event.target) {
+              console.log('event.target' + prop + ' = ' + event.target[prop]);
+            }
             $.ajax({
             url: "/litby/savedb",
             type: "POST",
@@ -41,7 +45,7 @@ html
         });
       };
 
-      var throttledAutoSave = MediumEditor.util.throttle(triggerAutoSave, 3000);
+      var throttledAutoSave = MediumEditor.util.throttle(triggerAutoSave, 5000);
 
             // Listening to editable events starts here
       editor.subscribe('editableInput', throttledAutoSave);

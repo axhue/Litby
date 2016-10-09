@@ -44,22 +44,21 @@ h2 {
     font-size: 32px;
     color: #5DCCFC;
     line-height: 42px;
-    font-family: 'lato', sans-serif;
+    font-family: 'Lato', sans-serif;
 }
 
 h3 {
     font-size: 26px;
     line-height: 32px;
+    font-family: 'Lato', sans-serif;
 }
 
 h4 {
     font-size: 24px;
     line-height: 28px;
+    font-family: 'Lato', sans-serif;
 }
 
-p {
-    margin-bottom: 40px;
-}
 
 a {
     color:black;
