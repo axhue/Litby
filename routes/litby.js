@@ -22,36 +22,36 @@ var headline_resp = mongoose.model('headline_resp',entry)
 var categories = [short_story,novel];
 
 function assemble_data(req,res,count){
-    short_story.findOne({fbid:req.query.fbid,doc_index:req.query.index},function (err,doc){
-            if (err){
-                console.log(err)
-            }
-            else{
-                //sort data by date
-                /*
-                function sortFactory(prop) {
-                  return function(a,b){ return b[prop].localeCompare(a[prop]); };
-                }*/
-                if(count){
+    short_story.count({fbid:req.query.fbid},function(err1, count){
+      var rev_index = String(count - 1 - req.query.index)
+      console.log(rev_index)
+      console.log(req.query.index)
+      short_story.findOne({fbid:req.query.fbid,doc_index:rev_index},function (err2,doc){
+              if (err2){
+                  console.log(err2)
+              }
+              if(doc){
+                  //sort data by date
+                  /*
+                  function sortFactory(prop) {
+                    return function(a,b){ return b[prop].localeCompare(a[prop]); };
+                  }*/
                   res.render('editor', {doc:doc,
-                                      entries:doc.msgs,
-                                      fbid:req.query.fbid,
-                                      index:req.query.index,
-                                      count:count});
-                }
-                else{
-                    short_story.count({fbid:req.query.fbid},function(err, count){
-                      res.render('editor', {doc:doc,
-                                      entries:doc.msgs,
-                                      fbid:req.query.fbid,
-                                      index:req.query.index,
-                                      count:count});
-                });
-                }
+                                        entries:doc.msgs,
+                                        fbid:req.query.fbid,
+                                        index:req.query.index,
+                                        count:count-1});
+  
+                
+  
+          }
+  
+    });
+    });
 
-        }
 
-});
+
+
 }
 /* GET home page. */
 router.get('/', function(req, res, next) {
@@ -83,9 +83,7 @@ router.post('/savedb', function(req, res, next) {
             res.msgs = req.body.data;
             res.save();
           });
-        
-
-    
+            
   }
   res.status(200)
   res.send()
@@ -215,7 +213,7 @@ router.get('/webhook', function(req, res, next) {
       console.log(doc)
       if(doc){
         console.log('updating')
-        doc.msgs = entry.concat(doc.msgs)
+        doc.msgs = doc.msgs.concat(entry)
         doc.num+=1
         doc.save(function(err,success){
           if(err){console.log(err)}

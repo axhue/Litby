@@ -22,22 +22,22 @@ html
   script.
       var index = parseInt('!{index}')
       var count = parseInt('!{count}')
-      if(index>0){
+      if(index<count){
         var a = document.createElement('a');
         var linkText = document.createTextNode("<< Previous Page");
         a.appendChild(linkText);
         a.title = "<< Previouse Page";
-        a.href = "/litby/geteditor?fbid=".concat('!{fbid}','&index=',index-1,'&count=',count);
+        a.href = "/litby/geteditor?fbid=".concat('!{fbid}','&index=',index+1,'&count=',count);
         a.style['float'] = "left"
         document.getElementById('paging').appendChild(a);
 
       }
-      if(index<count-1){
+      if(index!=0){
       var a = document.createElement('a');
       var linkText = document.createTextNode("Next Page >>");
       a.appendChild(linkText);
       a.title = "Next Page >>";
-      a.href = "/litby/geteditor?fbid=".concat('!{fbid}','&index=',index+1,'&count=',count);
+      a.href = "/litby/geteditor?fbid=".concat('!{fbid}','&index=',index-1,'&count=',count);
       a.style['right'] = "right"
       
       document.getElementById('paging').appendChild(a);
