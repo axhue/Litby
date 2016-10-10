@@ -21,8 +21,8 @@ var long_form = mongoose.model('long_form',entry)
 var headline_resp = mongoose.model('headline_resp',entry)
 var categories = [short_story,novel];
 
-function assemble_data(user_id,index,res){
-    short_story.findOne({fbid:user_id,doc_index:index},function (err,doc){
+function assemble_data(req,res,count){
+    short_story.findOne({fbid:req.query.fbid,doc_index:req.query.index},function (err,doc){
             if (err){
                 console.log(err)
             }
@@ -32,12 +32,26 @@ function assemble_data(user_id,index,res){
                 function sortFactory(prop) {
                   return function(a,b){ return b[prop].localeCompare(a[prop]); };
                 }*/
-                res.render('editor', {doc:doc,
+                if(count){
+                  res.render('editor', {doc:doc,
                                       entries:doc.msgs,
-                                      fbid:user_id});
-            }
-        });
+                                      fbid:req.query.fbid,
+                                      index:req.query.index,
+                                      count:count});
+                }
+                else{
+                    short_story.count({fbid:req.query.fbid},function(err, count){
+                      res.render('editor', {doc:doc,
+                                      entries:doc.msgs,
+                                      fbid:req.query.fbid,
+                                      index:req.query.index,
+                                      count:count});
+                });
+                }
 
+        }
+
+});
 }
 /* GET home page. */
 router.get('/', function(req, res, next) {
@@ -45,7 +59,7 @@ router.get('/', function(req, res, next) {
 });
 
 router.get('/geteditor', function(req, res, next) {
-  assemble_data(req.query.fbid,req.query.index,res)
+  assemble_data(req,res,req.query.count)
 });
 router.post('/savedb', function(req, res, next) {
   if (req.body.id === 'new_entry'){
@@ -171,7 +185,7 @@ router.get('/webhook', function(req, res, next) {
     texts[0] = headerhtml.concat(texts[0])
   }
   
-  entry = texts.join('')
+  var entry = texts.join('')
   var sendback = {
     "attachment": {
       "type": "template",
@@ -184,22 +198,24 @@ router.get('/webhook', function(req, res, next) {
             "url": 'https://stansonweb.herokuapp.com/litby/geteditor?index=0&fbid='+req.query.fbid,
             "title": "View editor"
           },
-          {
-            "type": "show_block",
-            "block_name": "Freewriting",
-            "title": "Keep going"
-          }
         ]
       }
     }
   };
+
+  if(req.query.freewrite){sendback.attachment.payload.buttons.push({
+            "type": "show_block",
+            "block_name": "Freewriting",
+            "title": "Keep going"
+          })}
+
   short_story.findOne({fbid:req.query.fbid,num:{"$lte":20,"$gte":0}},function(err,doc) {
     if(err){console.log(err)}
     else{
       console.log(doc)
       if(doc){
         console.log('updating')
-        doc.msgs = doc.msgs.concat(entry)
+        doc.msgs = entry.concat(doc.msgs)
         doc.num+=1
         doc.save(function(err,success){
           if(err){console.log(err)}

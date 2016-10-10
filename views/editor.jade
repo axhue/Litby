@@ -18,37 +18,55 @@ html
       if doc
         .editable(id=doc._id)
           !{entries}
-    script(src='../dist/js/medium-editor.js')
-    script.
-      var editor = new MediumEditor('.editable', {
-      toolbar: {
-      static: true,
-      sticky: true
+  .layout(id='paging')
+  script.
+      var index = parseInt('!{index}')
+      var count = parseInt('!{count}')
+      if(index>0){
+        var a = document.createElement('a');
+        var linkText = document.createTextNode("<< Previous Page");
+        a.appendChild(linkText);
+        a.title = "<< Previouse Page";
+        a.href = "/litby/geteditor?fbid=".concat('!{fbid}','&index=',index-1,'&count=',count);
+        a.style['float'] = "left"
+        document.getElementById('paging').appendChild(a);
+
       }
+      if(index<count-1){
+      var a = document.createElement('a');
+      var linkText = document.createTextNode("Next Page >>");
+      a.appendChild(linkText);
+      a.title = "Next Page >>";
+      a.href = "/litby/geteditor?fbid=".concat('!{fbid}','&index=',index+1,'&count=',count);
+      a.style['right'] = "right"
+      
+      document.getElementById('paging').appendChild(a);
+      }
+
+  script(src='../dist/js/medium-editor.js')
+  script.
+    var editor = new MediumEditor('.editable');
+    var triggerAutoSave = function (event, editable) {
+          for (var prop in editable) {
+            console.log('obj.' + prop + ' = ' + editable[prop]);
+          }
+          for (var prop in event.target) {
+            console.log('event.target' + prop + ' = ' + event.target[prop]);
+          }
+          $.ajax({
+          url: "/litby/savedb",
+          type: "POST",
+          //somehow get forms
+          data: {data:editable.innerHTML,
+                  id:editable.id,
+                  fbid:'!{fbid}'},
+          error: function(xhr, status, error) {
+            console.log(xhr.responseText);
+          }
       });
-      var triggerAutoSave = function (event, editable) {
-            for (var prop in editable) {
-              console.log('obj.' + prop + ' = ' + editable[prop]);
-            }
-            for (var prop in event.target) {
-              console.log('event.target' + prop + ' = ' + event.target[prop]);
-            }
-            $.ajax({
-            url: "/litby/savedb",
-            type: "POST",
-            //somehow get forms
-            data: {data:editable.innerHTML,
-                    id:editable.id,
-                    fbid:'!{fbid}'},
-            error: function(xhr, status, error) {
-              console.log(xhr.responseText);
-            }
-        });
-      };
-
-      var throttledAutoSave = MediumEditor.util.throttle(triggerAutoSave, 5000);
-
-            // Listening to editable events starts here
-      editor.subscribe('editableInput', throttledAutoSave);
-      cssLink = document.getElementById('medium-editor-theme');
-    script(src='../js/test.js')
+    };
+    var throttledAutoSave = MediumEditor.util.throttle(triggerAutoSave, 5000);
+          // Listening to editable events starts here
+    editor.subscribe('editableInput', throttledAutoSave);
+    cssLink = document.getElementById('medium-editor-theme');
+  script(src='../js/test.js')
