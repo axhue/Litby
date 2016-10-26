@@ -33,14 +33,13 @@ html
 
       }
       if(index!=0){
-      var a = document.createElement('a');
-      var linkText = document.createTextNode("Next Page >>");
-      a.appendChild(linkText);
-      a.title = "Next Page >>";
-      a.href = "/litby/geteditor?fbid=".concat('!{fbid}','&index=',index-1,'&count=',count);
-      a.style['right'] = "right"
-      
-      document.getElementById('paging').appendChild(a);
+        var a = document.createElement('a');
+        var linkText = document.createTextNode("Next Page >>");
+        a.appendChild(linkText);
+        a.title = "Next Page >>";
+        a.href = "/litby/geteditor?fbid=".concat('!{fbid}','&index=',index-1,'&count=',count);
+        a.style['right'] = "right"
+        document.getElementById('paging').appendChild(a);
       }
 
   script(src='../dist/js/medium-editor.js')

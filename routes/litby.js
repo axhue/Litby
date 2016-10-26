@@ -137,7 +137,6 @@ router.get('/silenthook', function(req, res, next) {
         doc.num+=1
         doc.save(function(err,success){
           if(err){console.log(err)}
-              res.json(sendback)
               res.status(200);
         })
       }
@@ -155,7 +154,6 @@ router.get('/silenthook', function(req, res, next) {
           })
         db_entry.save(function(err,success) {
           if(err) {console.log('err')}
-              res.json(sendback)
               res.status(200);
         });          
         })
@@ -217,6 +215,7 @@ router.get('/webhook', function(req, res, next) {
         doc.num+=1
         doc.save(function(err,success){
           if(err){console.log(err)}
+              console.log(sendback)
               res.json(sendback)
               res.status(200);
         })
@@ -235,6 +234,7 @@ router.get('/webhook', function(req, res, next) {
           })
         db_entry.save(function(err,success) {
           if(err) {console.log('err')}
+              console.log(sendback)
               res.json(sendback)
               res.status(200);
         });          
